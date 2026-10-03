@@ -1,0 +1,36 @@
+# Local credentials and environment files
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.ovpn
+id_rsa*
+id_ed25519*
+credentials*
+secrets*
+
+# Runtime data, exports and backup archives
+*.log
+*.sqlite*
+*.db
+*.sql
+*.dump
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.zip
+
+# Editor and operating-system artifacts
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Screenshots require explicit review before adding to the public repository
+assets/screenshots/*
+!assets/screenshots/.gitkeep
