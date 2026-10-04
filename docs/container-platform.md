@@ -15,8 +15,8 @@ support different infrastructure roles.
 | Security integration | CrowdSec |
 | Supporting applications | Vaultwarden, Filebrowser, Obsidian / WebDAV |
 
-The table groups roles; it is not a one-row-per-container count. Application
-workloads provide practical context for persistence, routing and operations.
+Application workloads provide practical context for persistence, routing and
+operations. The table groups services by role rather than counting containers.
 
 ## Network Membership
 
@@ -35,27 +35,33 @@ See the [network diagram](../diagrams/docker-networks.md).
 
 ## Persistence
 
-Bind mounts are the primary persistence method. Important state lives below
-`~/homelab/`, with the exact directory layout intentionally generalized.
+Bind mounts are the primary persistence method. The state below lives under
+`~/homelab/` and is covered by the main filesystem archive.
 
 | Bind-mounted state | Examples |
 | --- | --- |
 | Proxy and access | Nginx Proxy Manager data/certificates; WireGuard and OpenVPN configuration |
-| Application and database | Vaultwarden, n8n, Obsidian / WebDAV, PostgreSQL, Filebrowser database |
+| Application and database | Vaultwarden, n8n, Obsidian / WebDAV, PostgreSQL data directory, Filebrowser main database |
 | Monitoring and administration | Grafana, Uptime Kuma, Portainer |
 | DNS and security | AdGuard Home configuration/data; CrowdSec configuration/data |
 
-Prometheus time-series data and Netdata cache/state use Docker named volumes.
-Those volumes are outside the filesystem backup of the main homelab directory.
-Their historical data is therefore not covered by that backup process.
+These Docker named volumes sit outside the main directory archive:
 
-## Lifecycle and Health Claims
+| Service | State outside the backup |
+| --- | --- |
+| Prometheus | Historical time-series data |
+| Netdata | Cache/state |
+| Filebrowser | `/config` state, containing a small `settings.json` |
 
-Compose provides project-level organization. Portainer is present for container
-administration. Neither establishes that every workload is healthy.
+Filebrowser's main database is bind-mounted and included; its `/config` volume
+is separate. The live PostgreSQL files have a
+[database-consistency limitation](backup-and-recovery.md#postgresql-limitation).
 
-Per-container restart policies, health-check coverage and current health results
-were not included in the supplied evidence, so no uniform policy or health count
-is asserted here. Published ports also need separate review from network membership.
+## Container Operations
+
+Compose organizes service lifecycle by project, with Portainer available for
+container administration. Troubleshooting combines container state and logs
+with metrics and availability checks; network membership and published ports
+are reviewed separately.
 
 See [networking](networking.md) and [backup and recovery](backup-and-recovery.md).

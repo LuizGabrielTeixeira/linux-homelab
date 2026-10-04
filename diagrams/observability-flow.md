@@ -9,7 +9,7 @@ flowchart LR
     Kuma[Uptime Kuma] --> Availability[Service availability checks]
 ```
 
-This shows the monitoring architecture and component roles. It does not certify
-the health of every scrape target, dashboard, availability check or alert.
+The node-exporter → Prometheus → Grafana path is validated with host metrics.
+Uptime Kuma is actively used for availability checks.
 
-See [observability](../docs/observability.md).
+See [observability](../docs/observability.md) for the dashboards and storage boundary.

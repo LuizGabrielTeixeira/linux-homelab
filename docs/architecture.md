@@ -24,26 +24,20 @@ See the [high-level diagram](../diagrams/architecture.md).
   services use distinct Docker networks. n8n joins multiple networks intentionally.
 - **Visible persistent state:** most important service state is bind-mounted
   below `~/homelab/`, making the filesystem backup boundary explicit.
-- **Layered access paths:** DNS, reverse proxying and VPN services serve different
-  connectivity needs. Network membership alone does not establish public exposure.
+- **Layered access paths:** DNS resolves names, the reverse proxy routes service
+  requests and VPNs provide remote access.
 - **Operational feedback:** metrics and availability checks complement scheduled
   security and backup notifications.
 
-## Scope and Constraints
+## Scope and Operational Boundaries
 
-This is a personal, single-host environment; high availability is not claimed.
-The documented snapshot has approximately 17 containers across 13 Compose
-projects. Counts describe the current inventory, not a capacity target.
+The environment runs approximately 17 containers across 13 Compose projects
+on one host. Host maintenance affects the services it runs.
 
-Backup copies are local, and verification checks archives and extraction rather
-than restored application behavior. Monitoring named volumes sit outside the
-main directory backup. Detailed boundaries are recorded in the relevant pages.
-
-## Evidence Basis
-
-These documents use the owner-provided verified environment snapshot. No new
-server audit was needed to write them. Component roles and known configuration
-are distinguished from runtime health or test results that were not supplied.
+Backup copies are local. Verification combines integrity checks and an
+extraction-based restore simulation; application-level recovery remains a
+separate task. Some named-volume state is outside the main directory archive.
+See [backup and recovery](backup-and-recovery.md) for the exact boundary.
 
 ## Reading Paths
 

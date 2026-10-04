@@ -21,19 +21,20 @@ See the [backup flow](../diagrams/backup-flow.md).
 
 The backup script checks that removable destinations are mounted before writing.
 This avoids treating an unmounted USB mount point as the intended backup target.
-The snapshot does not establish an exact error-handling policy for each failure.
 
-These are multiple local copies. No off-site backup is claimed.
+All three copies are local; there is no off-site destination.
 
 ## Data Boundary
 
-The archive covers the main directory, represented as `~/homelab/`. Most
-important service state is bind-mounted there, including proxy data/certificates,
-application state, database files and VPN configuration.
+The archive covers `~/homelab/`, including bind-mounted state for Nginx Proxy
+Manager, Vaultwarden, n8n, Obsidian / WebDAV, WireGuard configuration, Grafana,
+the PostgreSQL data directory, Filebrowser's main database, Uptime Kuma,
+CrowdSec, OpenVPN, AdGuard Home and Portainer.
 
-Prometheus time-series data and Netdata cache/state use Docker named volumes
-outside this backup boundary. The process does not back up every Docker volume
-or constitute a complete host image.
+Named-volume state outside that directory includes Prometheus historical
+time-series data, Netdata cache/state and Filebrowser's `/config` volume
+(a small `settings.json`). The Filebrowser main database is included; the
+separate configuration volume is not. This is a directory backup, not a host image.
 
 ## Automated Verification
 
@@ -46,30 +47,18 @@ The verification process:
 5. Compares the local archive hash with the USB copies.
 6. Cleans up the temporary extraction directory.
 
-Results integrate with n8n and Telegram notifications. This is automated
+Results integrate with n8n and Telegram notifications. This provides automated
 integrity verification and an extraction-based restore simulation. Hash
-comparison checks copy equality; it does not establish application consistency.
+comparison confirms that the destination copies match the local archive.
 
 ## PostgreSQL Limitation
 
-The PostgreSQL data directory is archived while PostgreSQL is running. This is
-a filesystem-level copy of live database files, not a database-consistent
-PostgreSQL backup.
+The PostgreSQL data directory is archived while PostgreSQL is running. It is a
+filesystem-level copy of live database files, not an application-consistent
+database backup. Archive verification does not validate PostgreSQL recovery.
 
-A successful archive check or extraction does not prove that PostgreSQL can
-recover from those files. No application-level database restore validation is
-documented in the supplied evidence.
+## Recovery Scope
 
-## Recovery Claims
-
-| Supported description | Not established |
-| --- | --- |
-| Automated daily filesystem backup | Complete host disaster recovery |
-| Multiple local copies with retention | Off-site protection |
-| Archive integrity and extraction checks | Successful application startup after restoration |
-| Hash comparison of copies | Database-consistent PostgreSQL recovery |
-
-The one-hour schedule gap does not itself prove that backup creation always
-finishes before verification starts. Recent run results, duration and any
-application-level recovery test should be checked manually before adding
-stronger recovery claims.
+Verification tests the archive and extracted directory structure. Restoring
+services and checking application behavior remain separate from this automated
+process; a full disaster recovery test has not been performed as part of it.

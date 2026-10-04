@@ -1,8 +1,7 @@
 # Networking
 
 Networking combines a private LAN, an upstream router, Docker networks and
-infrastructure services for DNS, reverse proxying and VPN access. Public
-addresses, domains, peer details and externally reachable ports are omitted.
+infrastructure services for DNS, reverse proxying and VPN remote access.
 
 ## Connectivity Roles
 
@@ -14,9 +13,9 @@ addresses, domains, peer details and externally reachable ports are omitted.
 | OpenVPN | VPN access on Docker's default bridge |
 | Upstream router / NAT | Determines routing and forwarding toward the host |
 
-Specific client DNS assignments, proxy routes, certificates and VPN routing
-policies are not reproduced. VPN deployment does not by itself demonstrate a
-recent successful connection from every client.
+Nginx Proxy Manager provides an entry point for proxied services. WireGuard and
+OpenVPN provide remote access; their client routing policies determine which
+destinations a VPN client can reach.
 
 ## Service-Oriented Docker Separation
 
@@ -24,20 +23,18 @@ Reverse proxy, database and monitoring components use separate networks.
 This organizes connectivity around service relationships rather than placing
 every container on one shared bridge.
 
-n8n joins both `nginx-proxy` and `database` to reach the components it needs.
-This is intentional multi-network membership, not an accidental duplicate
-deployment. Other projects have their own networks.
+n8n intentionally joins both `nginx-proxy` and `database` to reach the components
+it needs. Other projects have their own networks.
 
 AdGuard Home and Netdata share the host network namespace. Their listeners
 must be considered as host-network listeners rather than bridge-published ports.
 OpenVPN and WireGuard use different bridge arrangements.
 
 See the [Docker network diagram](../diagrams/docker-networks.md) for membership.
-Network separation is not presented as zero-trust or comprehensive isolation.
 
 ## Host Firewall and Docker Publishing
 
-The verified UFW policy is approximately:
+UFW uses these default policies:
 
 | Direction | Default policy |
 | --- | --- |
@@ -55,9 +52,8 @@ Docker's rules, host policy and upstream router/NAT configuration together.
 
 ## Exposure Boundary
 
-This documentation describes service relationships, not the exact external
-topology. A reverse proxy or VPN container being deployed is not evidence that
-its port is reachable from the Internet. Current forwarding and reachable
-endpoints require a separate owner review before making exposure claims.
+Actual Internet exposure depends on upstream router/NAT forwarding together
+with host listeners and Docker publishing. The diagrams show service
+relationships, not externally reachable endpoints.
 
 See [security](security.md) for SSH and enforcement limitations.

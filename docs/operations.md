@@ -1,8 +1,8 @@
 # Operations and Automation
 
 Operations combine native scheduling, container administration, monitoring and
-n8n workflows. n8n is an operational integration component, not just an
-application hosted on the server.
+n8n workflows. n8n processes backup and security results, classifies status and
+sends operational notifications.
 
 ## Automation Components
 
@@ -21,9 +21,15 @@ application hosted on the server.
 | Security scan/log results | n8n status classification | Telegram notification |
 | Backup/verification results | n8n success, warning or failure classification | Telegram notification |
 
-Workflow architecture is documented without exporting complete n8n workflows,
-credentials, identifiers or message contents. No recent end-to-end delivery
-test is asserted by this snapshot.
+## Workflow Executions
+
+![n8n execution history for Backup Monitor and RootKit Hunter](../assets/screenshots/n8n.png)
+
+*The execution history shows successful runs of “Backup Monitor” and “RootKit
+Hunter” on multiple days, demonstrating n8n's infrastructure operations role.*
+
+Workflow success records execution status, not the underlying backup's recovery
+quality or confirmation of Telegram delivery.
 
 ## Scheduled Backup Operations
 
@@ -46,12 +52,6 @@ The architecture provides a practical investigation path:
 | Backup warning/failure | Job result, destination mount state, archive checks and copy hashes |
 | Missing notification | Source result, n8n execution status and notification delivery |
 
-This is an investigation map, not a record of completed tests. Container logs,
-host service logs and metrics need to be correlated before assigning a cause.
-
-## Maintenance Evidence
-
-The repository records the operational design rather than retaining raw logs or
-execution histories. Recent job success, monitoring health, pending updates and
-notification delivery remain runtime facts to check on the server when needed.
-Checks requiring elevated privileges should be performed manually by the owner.
+Container logs, host service logs and metrics are correlated before assigning a
+cause. Routine maintenance also includes reviewing scheduled job results,
+storage availability, package updates and pending reboots.

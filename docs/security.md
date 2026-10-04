@@ -1,26 +1,22 @@
 # Security
 
 Security combines host access controls, firewall policy, security tooling and
-operational notifications. Claims below distinguish effective configuration
-from deployed software whose current enforcement is not verified.
+operational notifications.
 
 ## Controls and Status
 
-| Component | Documented state |
+| Component | Current state |
 | --- | --- |
 | UFW | Default incoming deny, outgoing allow and routed deny; selected ports permitted |
 | SSH | Effective access restrictions listed below |
 | Unattended upgrades | Present for automated update handling |
 | Lynis | Deployed for security auditing |
 | rkhunter | Deployed for security checks |
-| CrowdSec | Deployed; active enforcement not currently treated as verified |
-
-Tool deployment is not a claim that the host is free of vulnerabilities or that
-every scan, update or enforcement action succeeds.
+| CrowdSec | Deployed; active enforcement not verified |
 
 ## Effective SSH Configuration
 
-The supplied effective settings, verified through `sshd -T`, are:
+Effective settings checked through `sshd -T`:
 
 | Setting | Effective value |
 | --- | --- |
@@ -37,20 +33,13 @@ authentication, so the effective state is not key-only access.
 
 ## Firewall and Access Boundaries
 
-UFW policy must be interpreted alongside Docker-managed port-publishing rules
-and upstream router/NAT configuration. The public documentation does not list
-reachable endpoints or reproduce full firewall output.
+UFW policy is interpreted alongside Docker-managed port-publishing rules
+and upstream router/NAT configuration.
 
 See [networking](networking.md) for this interaction and the deployed VPN services.
 
 ## Operational Integration
 
 Security scan/log results feed n8n for status classification and Telegram
-notifications. This records the automation architecture, not a recent test
-result for every scan or notification path.
-
-## Public Documentation Boundary
-
-Credentials, authentication material, VPN peers, domains, addresses and personal
-paths are excluded. Generic host and storage labels explain controls without
-publishing access details. No raw audit output or full workflows are included.
+notifications. See [operations](operations.md) for the workflow roles and
+execution history.

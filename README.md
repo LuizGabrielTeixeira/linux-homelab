@@ -1,13 +1,14 @@
 # Linux Homelab
 
-**Linux Infrastructure & Self-Hosted Homelab** — a practical personal environment
-built around Ubuntu Server, Docker and operational automation. This repository
-documents the live architecture and engineering decisions behind networking,
-monitoring, security and backup workflows.
+**Linux Infrastructure & Self-Hosted Homelab**
 
-The focus is infrastructure administration and reliability practices. Hosted
-applications provide workloads for that infrastructure rather than define the
-project.
+I operate a personal Ubuntu Server running Docker / Compose services, with
+intentional network separation, VPN remote access, host metrics and service
+availability monitoring. Daily backups, automated verification and n8n
+notifications support routine maintenance and troubleshooting.
+
+This repository documents the live environment and the engineering decisions
+behind it, with examples of monitoring and operational workflow executions.
 
 ## Architecture
 
@@ -33,23 +34,20 @@ reachability. See the [architecture overview](docs/architecture.md).
 | Linux | Ubuntu Server, systemd, SSH, cron, unattended upgrades and time synchronization |
 | Containerization | Docker Engine, Compose projects, bridge/host networking and persistent mounts |
 | Networking | AdGuard Home DNS, Nginx Proxy Manager, WireGuard / wg-easy, OpenVPN and UFW |
-| Observability | Prometheus, node-exporter, cAdvisor, Grafana, Netdata and Uptime Kuma |
+| Observability | Host metrics validated through node-exporter → Prometheus → Grafana; container metrics and availability checks |
 | Security | Effective SSH restrictions, firewall policy, Lynis, rkhunter and security notifications |
-| Backup & recovery | Daily filesystem archives, local/USB copies, retention and automated extraction tests |
+| Backup & recovery | Automated daily archives, local/USB copies, integrity verification and extraction-based restore simulation |
 | Automation | cron scheduling, n8n status classification and Telegram notifications |
 
-## Infrastructure Snapshot
+## Current Environment
 
 - Ubuntu Server 24.04 LTS with Docker Engine and Docker Compose.
 - Approximately **17 containers across 13 Compose projects**.
 - Multiple Docker bridge networks plus selected host-network services.
 - DNS, reverse proxy and VPN services.
-- Host/container metrics, visualization and service availability tooling.
+- Host metrics in Grafana and multiple availability checks in Uptime Kuma.
 - Daily backup at **04:00** and automated verification at **05:00**, server-local time.
 - Three local backup destinations: one local directory and two USB targets.
-
-Counts and configuration reflect the supplied verified snapshot; they are not a
-claim that every service, check or notification is currently healthy.
 
 ## Key Engineering Practices
 
@@ -65,20 +63,18 @@ claim that every service, check or notification is currently healthy.
   structure and cross-copy hashes are checked automatically.
 - **Operational feedback:** security and backup results feed n8n and Telegram.
 
-Important boundaries remain explicit: backup copies are local; live PostgreSQL
-files are not a database-consistent backup; Prometheus/Netdata named-volume
-history is outside the archive. SSH password authentication is enabled, and
-CrowdSec active enforcement is not currently treated as verified.
+Examples: [host metrics and availability monitoring](docs/observability.md)
+and [backup/security workflow executions](docs/operations.md).
 
 ## Documentation
 
 | Document | Covers |
 | --- | --- |
-| [Architecture](docs/architecture.md) | Infrastructure layers, decisions and evidence scope |
+| [Architecture](docs/architecture.md) | Infrastructure layers, design decisions and scope |
 | [Host platform](docs/host-platform.md) | Linux services, administration and maintenance |
 | [Container platform](docs/container-platform.md) | Inventory, Docker networks and persistence |
 | [Networking](docs/networking.md) | DNS, proxy, VPN, firewall and exposure boundaries |
-| [Observability](docs/observability.md) | Monitoring roles, storage and verification limits |
+| [Observability](docs/observability.md) | Metrics flow, dashboards and availability checks |
 | [Security](docs/security.md) | Effective SSH settings and security control status |
 | [Backup and recovery](docs/backup-and-recovery.md) | Scheduling, copies, verification and recovery limits |
 | [Operations](docs/operations.md) | Automation, notifications and troubleshooting |
@@ -90,7 +86,6 @@ Diagrams: [architecture](diagrams/architecture.md),
 
 ## Repository Scope
 
-This is technical documentation for a live personal homelab, intended to support
-CV discussions and infrastructure interviews. It contains no complete deployment
-configurations, provisioning automation, credentials or personal service data.
-Host names, paths and storage targets are generalized for public reading.
+This repository documents a live personal homelab; it does not deploy it.
+Complete deployment configurations, credentials and personal service data are
+excluded. Host names, paths and storage targets are generalized for public reading.

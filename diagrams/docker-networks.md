@@ -33,7 +33,7 @@ flowchart LR
     Automation -. same container .- AutomationDB
 ```
 
-Boxes show network membership, not firewall boundaries or verified request flows.
+Boxes show network membership.
 n8n deliberately joins multiple networks to reach infrastructure components;
 its two labels represent one container. Other projects have their own networks.
 

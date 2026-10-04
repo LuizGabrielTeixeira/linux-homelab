@@ -31,6 +31,9 @@ secrets*
 .DS_Store
 Thumbs.db
 
-# Screenshots require explicit review before adding to the public repository
+# Only reviewed portfolio screenshots are included
 assets/screenshots/*
 !assets/screenshots/.gitkeep
+!assets/screenshots/grafana-node-exporter.png
+!assets/screenshots/n8n.png
+!assets/screenshots/up-time-kuma.png

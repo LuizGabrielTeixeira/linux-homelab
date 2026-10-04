@@ -1,8 +1,8 @@
 # Observability
 
-The monitoring stack combines Prometheus, node-exporter and cAdvisor for
-infrastructure metrics, with Grafana for visualization. Netdata and Uptime
-Kuma provide complementary real-time telemetry and availability checks.
+Prometheus collects host metrics from node-exporter and container metrics from
+cAdvisor, with Grafana for visualization. Netdata provides real-time telemetry,
+and Uptime Kuma is actively used for service availability monitoring.
 
 ## Component Roles
 
@@ -17,26 +17,36 @@ Kuma provide complementary real-time telemetry and availability checks.
 
 See the [observability flow](../diagrams/observability-flow.md).
 
+## Host Metrics in Grafana
+
+The **node-exporter → Prometheus → Grafana** path has been operationally
+validated with live/recorded host metrics: CPU, system load, RAM, swap,
+filesystem usage, network activity and uptime.
+
+![Grafana Node Exporter Full dashboard with host metrics](../assets/screenshots/grafana-node-exporter.png)
+
+*The Node Exporter Full dashboard uses the Prometheus datasource and shows
+host resource gauges and recorded CPU/memory trends.*
+
+## Availability Checks
+
+![Uptime Kuma dashboard with configured service checks and status history](../assets/screenshots/up-time-kuma.png)
+
+*Multiple DNS and service checks are configured, with status indicators and
+Up/Down event history. The DNS response address and profile initial are redacted.*
+
+The displayed percentages describe the checks' selected reporting periods, not
+an uptime guarantee. A container availability check, including CrowdSec's, does
+not validate the application's enforcement behavior.
+
 ## Connectivity and Storage
 
 Prometheus, Grafana, cAdvisor and node-exporter belong to the `monitoring`
 network. Netdata uses host networking; Uptime Kuma belongs to `nginx-proxy`.
-These are network memberships, not proof of unrestricted cross-network access.
 
 Grafana and Uptime Kuma state is bind-mounted below the main homelab directory.
-Prometheus time-series data and Netdata cache/state use named volumes outside
-that directory's filesystem backup. Historical monitoring data is not claimed
-as recoverable from the daily homelab archive.
-
-## Verification Boundary
-
-The supplied snapshot establishes the deployed components and their roles.
-It does not provide current scrape results, dashboard contents, configured
-check coverage or alert-delivery tests.
-
-Before claiming a particular host or service is actively monitored, confirm its
-target/check status and recent data. A running container alone does not verify
-collection, visualization or notification delivery.
+Prometheus historical data and Netdata cache/state are stored in Docker named
+volumes and are currently outside the main filesystem backup.
 
 ## Operational Use
 
@@ -44,5 +54,6 @@ Host metrics, container metrics and service checks offer different views of a
 failure. Together with host and container logs, they support distinguishing
 resource pressure, container faults and connectivity problems.
 
-Security and backup notifications are described in [operations](operations.md);
-they are not evidence of a verified Prometheus alerting configuration.
+Validation currently covers the host-metrics path shown above. Other scrape
+targets, dashboards and alert delivery need individual checks. Security and
+backup notifications are described in [operations](operations.md).
